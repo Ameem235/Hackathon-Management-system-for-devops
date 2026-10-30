@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Replace with your Docker Hub username or pass as Jenkins parameter
-        DOCKERHUB_USER = 'your-dockerhub-username'
+        DOCKERHUB_USER = 'ameeeem'
         BACKEND_IMAGE  = "${DOCKERHUB_USER}/hackathon-backend"
         FRONTEND_IMAGE = "${DOCKERHUB_USER}/hackathon-frontend"
         IMAGE_TAG      = "${BUILD_NUMBER}"
