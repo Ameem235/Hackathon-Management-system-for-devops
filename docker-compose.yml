@@ -1,0 +1,61 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: hackathon-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: hackathon
+      MYSQL_USER: hackathon_user
+      MYSQL_PASSWORD: hackathon_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - hackathon-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hackathon-backend
+    restart: always
+    environment:
+      DB_HOST: mysql
+      DB_USER: hackathon_user
+      DB_PASSWORD: hackathon_password
+      DB_NAME: hackathon
+      DB_PORT: 3306
+      PORT: 5000
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - hackathon-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: hackathon-frontend
+    restart: always
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    networks:
+      - hackathon-network
+
+networks:
+  hackathon-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
+

@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hackathon Event Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #e0e7ff;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --radius: 12px;
+      --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+      border-bottom: 1px solid var(--card-border);
+      padding: 1.5rem 2rem;
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      background: var(--primary);
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(79, 70, 229, 0.6);
+    }
+
+    .logo-text h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-text p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .system-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(30, 41, 59, 0.7);
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      border: 1px solid var(--card-border);
+      font-size: 0.85rem;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--warning);
+      box-shadow: 0 0 8px var(--warning);
+      transition: all 0.3s ease;
+    }
+
+    .status-dot.online {
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    .status-dot.offline {
+      background: var(--danger);
+      box-shadow: 0 0 8px var(--danger);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      flex: 1;
+      width: 100%;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    @media (min-width: 868px) {
+      .dashboard-grid {
+        grid-template-columns: 380px 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .badge-count {
+      background: var(--primary);
+      color: #fff;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-refresh {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-refresh:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-delete:hover {
+      background: var(--danger);
+      color: white;
+      border-color: var(--danger);
+    }
+
+    /* Alert Banners */
+    .alert {
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.25rem;
+      font-size: 0.875rem;
+      display: none;
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    /* Teams List */
+    .teams-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 0.75rem;
+      opacity: 0.6;
+    }
+
+    .team-card {
+      background: #151f32;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      transition: transform 0.2s, border-color 0.2s;
+      position: relative;
+    }
+
+    .team-card:hover {
+      border-color: #475569;
+      transform: translateY(-2px);
+    }
+
+    .team-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+
+    .team-id-name {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .team-id-badge {
+      background: rgba(79, 70, 229, 0.2);
+      color: #a5b4fc;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid rgba(79, 70, 229, 0.4);
+    }
+
+    .team-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .team-date {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .team-detail {
+      margin-bottom: 0.75rem;
+    }
+
+    .team-detail-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+
+    .member-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .member-tag {
+      background: #0f172a;
+      border: 1px solid #334155;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      color: #cbd5e1;
+    }
+
+    .project-idea {
+      background: #0f172a;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      color: #e2e8f0;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      border-left: 3px solid var(--primary);
+    }
+
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="logo-group">
+        <div class="logo-icon">&#x26A1;</div>
+        <div class="logo-text">
+          <h1>Hackathon Management Portal</h1>
+          <p>Three-Tier Kubernetes &amp; CI/CD Architecture</p>
+        </div>
+      </div>
+      <div class="system-status">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Checking Backend...</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="dashboard-grid">
+      <!-- Left Column: Registration Form -->
+      <section>
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Register Team</h2>
+          </div>
+          <div class="card-body">
+            <div id="formAlert" class="alert"></div>
+
+            <form id="teamForm">
+              <div class="form-group">
+                <label for="teamName">Team Name *</label>
+                <input type="text" id="teamName" required placeholder="e.g. CyberKnights" autocomplete="off">
+              </div>
+
+              <div class="form-group">
+                <label for="members">Team Members * (Comma separated)</label>
+                <input type="text" id="members" required placeholder="e.g. Alice, Bob, Charlie" autocomplete="off">
+              </div>
+
+              <div class="form-group">
+                <label for="projectIdea">Project Pitch / Idea *</label>
+                <textarea id="projectIdea" required placeholder="Describe your hackathon innovation, technology stack, and impact..."></textarea>
+              </div>
+
+              <button type="submit" id="submitBtn" class="btn btn-primary">
+                Register Team
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Registered Teams List -->
+      <section>
+        <div class="card">
+          <div class="card-header">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <h2 class="card-title">Registered Teams</h2>
+              <span id="teamCountBadge" class="badge-count">0</span>
+            </div>
+            <button class="btn-refresh" id="refreshBtn">&#x21bb; Refresh</button>
+          </div>
+          <div class="card-body">
+            <div id="listAlert" class="alert"></div>
+            <div id="teamsList" class="teams-container">
+              <div class="empty-state">
+                <div class="empty-icon">&#x1F4CB;</div>
+                <p>Loading registered teams...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <p>Hackathon Event Management System &bull; Frontend (Nginx) &bull; Backend (Node.js 18) &bull; Database (MySQL 8)</p>
+  </footer>
+
+  <script>
+    // State & DOM Elements
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const teamForm = document.getElementById('teamForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const formAlert = document.getElementById('formAlert');
+    const listAlert = document.getElementById('listAlert');
+    const teamsList = document.getElementById('teamsList');
+    const teamCountBadge = document.getElementById('teamCountBadge');
+    const refreshBtn = document.getElementById('refreshBtn');
+
+    // Helper: Show Alert
+    function showAlert(element, message, type = 'success', autoDismiss = 4000) {
+      element.className = `alert alert-${type}`;
+      element.textContent = message;
+      element.style.display = 'block';
+
+      if (autoDismiss > 0) {
+        setTimeout(() => {
+          element.style.display = 'none';
+        }, autoDismiss);
+      }
+    }
+
+    // Check Backend Health
+    async function checkHealth() {
+      try {
+        const res = await fetch('/api/health');
+        if (res.ok) {
+          const data = await res.json();
+          statusDot.className = 'status-dot online';
+          statusText.textContent = 'Backend Online (DB Connected)';
+        } else {
+          statusDot.className = 'status-dot';
+          statusText.textContent = 'Backend Degraded';
+        }
+      } catch (err) {
+        statusDot.className = 'status-dot offline';
+        statusText.textContent = 'Backend Unreachable';
+      }
+    }
+
+    // Fetch and Render Teams
+    async function fetchTeams() {
+      try {
+        const res = await fetch('/api/teams');
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || `HTTP error ${res.status}`);
+        }
+
+        const teams = await res.json();
+        teamCountBadge.textContent = teams.length;
+
+        if (teams.length === 0) {
+          teamsList.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">&#x1F4CB;</div>
+              <p>No teams registered yet. Be the first team to sign up!</p>
+            </div>
+          `;
+          return;
+        }
+
+        teamsList.innerHTML = teams.map(team => {
+          const formattedDate = new Date(team.registered_at).toLocaleString();
+          const memberList = team.members
+            ? team.members.split(',').map(m => `<span class="member-tag">${escapeHtml(m.trim())}</span>`).join('')
+            : '<span class="member-tag">No members listed</span>';
+
+          return `
+            <div class="team-card" id="team-${team.id}">
+              <div class="team-card-header">
+                <div>
+                  <div class="team-id-name">
+                    <span class="team-id-badge">#${team.id}</span>
+                    <span class="team-name">${escapeHtml(team.team_name)}</span>
+                  </div>
+                  <div class="team-date">Registered: ${formattedDate}</div>
+                </div>
+                <button class="btn-delete" onclick="deleteTeam(${team.id}, '${escapeHtml(team.team_name)}')">
+                  Delete
+                </button>
+              </div>
+
+              <div class="team-detail">
+                <div class="team-detail-label">Team Members</div>
+                <div class="member-tags">${memberList}</div>
+              </div>
+
+              <div class="team-detail">
+                <div class="team-detail-label">Project Concept</div>
+                <div class="project-idea">${escapeHtml(team.project_idea)}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+      } catch (err) {
+        console.error('Fetch teams error:', err);
+        showAlert(listAlert, `Error loading teams: ${err.message}`, 'error', 0);
+        teamsList.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">&#x26A0;</div>
+            <p style="color: #fca5a5;">Failed to load teams from server.</p>
+          </div>
+        `;
+      }
+    }
+
+    // Register Team Form Handler
+    teamForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const team_name = document.getElementById('teamName').value.trim();
+      const members = document.getElementById('members').value.trim();
+      const project_idea = document.getElementById('projectIdea').value.trim();
+
+      if (!team_name || !members || !project_idea) {
+        showAlert(formAlert, 'Please complete all fields.', 'error');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Registering...';
+
+      try {
+        const res = await fetch('/api/teams', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ team_name, members, project_idea })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to register team');
+        }
+
+        showAlert(formAlert, `Team "${escapeHtml(team_name)}" registered successfully!`, 'success');
+        teamForm.reset();
+        await fetchTeams();
+      } catch (err) {
+        showAlert(formAlert, `Error: ${err.message}`, 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Register Team';
+      }
+    });
+
+    // Delete Team Handler
+    async function deleteTeam(id, name) {
+      if (!confirm(`Are you sure you want to delete team "${name}" (ID #${id})?`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/teams/${id}`, {
+          method: 'DELETE'
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to delete team');
+        }
+
+        showAlert(listAlert, `Team "${name}" deleted.`, 'success');
+        await fetchTeams();
+      } catch (err) {
+        showAlert(listAlert, `Error deleting team: ${err.message}`, 'error');
+      }
+    }
+
+    // Helper: Escape HTML
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Event Listeners & Periodic Sync
+    refreshBtn.addEventListener('click', () => {
+      fetchTeams();
+      checkHealth();
+    });
+
+    // Initial load
+    checkHealth();
+    fetchTeams();
+    setInterval(checkHealth, 15000);
+  </script>
+</body>
+</html>
+
